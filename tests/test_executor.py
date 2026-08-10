@@ -143,6 +143,39 @@ def test_fetch_zotero_corpus_paper_with_zero_collections(config, monkeypatch):
     assert corpus[0].paths == []
 
 
+def test_fetch_zotero_corpus_raises_on_empty_user_id(config):
+    from copy import deepcopy
+
+    from omegaconf import OmegaConf
+
+    cfg = deepcopy(config)
+    with OmegaConf.open_dict(cfg):
+        cfg.zotero.user_id = ""
+
+    executor = Executor.__new__(Executor)
+    executor.config = cfg
+
+    with pytest.raises(ValueError, match="user_id is not set"):
+        executor.fetch_zotero_corpus()
+
+
+def test_fetch_zotero_corpus_raises_on_empty_api_key(config):
+    from copy import deepcopy
+
+    from omegaconf import OmegaConf
+
+    cfg = deepcopy(config)
+    with OmegaConf.open_dict(cfg):
+        cfg.zotero.user_id = "000000"
+        cfg.zotero.api_key = ""
+
+    executor = Executor.__new__(Executor)
+    executor.config = cfg
+
+    with pytest.raises(ValueError, match="api_key is not set"):
+        executor.fetch_zotero_corpus()
+
+
 # ---------------------------------------------------------------------------
 # E2E: Executor.run()
 # ---------------------------------------------------------------------------
