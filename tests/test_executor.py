@@ -143,6 +143,32 @@ def test_fetch_zotero_corpus_paper_with_zero_collections(config, monkeypatch):
     assert corpus[0].paths == []
 
 
+def test_fetch_zotero_corpus_raises_on_empty_user_id(config):
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.zotero.user_id = ""
+
+    executor = Executor.__new__(Executor)
+    executor.config = config
+
+    with pytest.raises(ValueError, match="config.zotero.user_id is empty"):
+        executor.fetch_zotero_corpus()
+
+
+def test_fetch_zotero_corpus_raises_on_empty_api_key(config):
+    from omegaconf import open_dict
+
+    with open_dict(config):
+        config.zotero.api_key = ""
+
+    executor = Executor.__new__(Executor)
+    executor.config = config
+
+    with pytest.raises(ValueError, match="config.zotero.api_key is empty"):
+        executor.fetch_zotero_corpus()
+
+
 # ---------------------------------------------------------------------------
 # E2E: Executor.run()
 # ---------------------------------------------------------------------------

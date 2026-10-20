@@ -41,6 +41,16 @@ class Executor:
         self.openai_client = OpenAI(api_key=config.llm.api.key, base_url=config.llm.api.base_url)
     def fetch_zotero_corpus(self) -> list[CorpusPaper]:
         logger.info("Fetching zotero corpus")
+        if not self.config.zotero.user_id:
+            raise ValueError(
+                "config.zotero.user_id is empty. "
+                "Please set the ZOTERO_ID secret in your GitHub repository settings."
+            )
+        if not self.config.zotero.api_key:
+            raise ValueError(
+                "config.zotero.api_key is empty. "
+                "Please set the ZOTERO_KEY secret in your GitHub repository settings."
+            )
         zot = zotero.Zotero(self.config.zotero.user_id, 'user', self.config.zotero.api_key)
         collections = zot.everything(zot.collections())
         collections = {c['key']:c for c in collections}
